@@ -1,3 +1,4 @@
+
 .gallery-section {
     padding: 60px 0;
 }
@@ -30,4 +31,9 @@
 .load-more {
     margin: 0 auto;
     display: block;
+}
+
+.is-hidden {
+    visibility: hidden;
+    opacity: 0;
 }
