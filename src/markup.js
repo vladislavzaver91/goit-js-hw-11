@@ -1,21 +1,23 @@
 export function createPhotoGalleryMarkup (photos) {
     return photos.map(({webformatURL, tags, likes, views, comments, downloads}) => {
-        return /*html*/ `<div class="photo-card">
-        <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+        return /*html*/ `<li class="photo-card">
+        <a class="link" href="${webformatURL}">
+        <img src="${webformatURL}" alt="${tags}" width="270" height="260" loading="lazy" />
         <div class="info">
             <p class="info-item">${likes}
-            <b>Likes</b>
+            <b class="info-text">Likes</b>
             </p>
             <p class="info-item">${views}
-            <b>Views</b>
+            <b class="info-text">Views</b>
             </p>
             <p class="info-item">${comments}
-            <b>Comments</b>
+            <b class="info-text">Comments</b>
             </p>
             <p class="info-item">${downloads}
-            <b>Downloads</b>
+            <b class="info-text">Downloads</b>
             </p>
         </div>
-    </div>`
+        </a>
+    </li>`
     }).join('');
 }
