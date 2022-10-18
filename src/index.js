@@ -1,32 +1,57 @@
 import { PixabayAPI } from "./PixabayAPI";
 import { createPhotoGalleryMarkup } from "./markup";
 import refs from './refs';
+import scrollTop from "./scrollTop";
 
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 
 const pixabay = new PixabayAPI();
 
-let options = {
+const options = {
     root: null,
     rootMargin: '100px',
     threshold: 1.0
 }
 
-let callback = (entries, observer) => {
-    entries.forEach((entry) => {
+const callback = async function (entries, observer) {
+    entries.forEach(async entry => {
+        
         if (entry.isIntersecting) {
             pixabay.incrementPage();
-            console.log(pixabay);
+            observer.unobserve(entry.target);
+
+            if (!pixabay.isShowLoadMore) {
+                observer.unobserve(entry.target);
+                Notify.info("We're sorry, but you've reached the end of search results.");
+            }
+
+            try {
+                const { hits } = await pixabay.getPhotos()
+                renderPhotoGalleryMarkup(hits);
+
+                if (pixabay.isShowLoadMore) {
+                    const target = document.querySelector('.photo-card:last-child');
+                    observer.observe(target);
+            }
+
+            lightbox.refresh();
+            } catch (error) {
+                Notify.failure(error.message, 'Oops, something went wrong!');
+                clearPage();
+            }
         }
     });
 };
 
-let io = new IntersectionObserver(callback, options);
+const observer = new IntersectionObserver(callback, options);
 
 refs.form.addEventListener('submit', handleSubmit);
 refs.loadMoreBtn.addEventListener('click', onLoadMoreClick);
+
+const lightbox = new SimpleLightbox('.gallery a');
 
 function renderPhotoGalleryMarkup(hits) {
     const markup = createPhotoGalleryMarkup(hits);
@@ -38,6 +63,7 @@ async function handleSubmit (ev) {
 
     const {elements: {searchQuery}} = ev.currentTarget;
     const query = searchQuery.value.trim().toLowerCase();
+
     if (!query) {
         Notify.failure('Please, enter your search details');
         return;
@@ -54,37 +80,20 @@ async function handleSubmit (ev) {
         }
         renderPhotoGalleryMarkup(hits);
         
-        const target = document.querySelector('.photo-card:last-child');
-        io.observe(target);
         pixabay.calculateTotalHits(total);
         Notify.success(`Hooray! We found ${total} images.`);
 
         if (pixabay.isShowLoadMore) {
-            refs.loadMoreBtn.classList.remove('is-hidden');
+            const target = document.querySelector('.photo-card:last-child');
+            observer.observe(target);
         }
+
+        lightbox.refresh();
+        
     } catch (error) {
         Notify.failure(error.message, 'Oops, something went wrong!');
         clearPage();
     }
-
-
-    // pixabay.getPhotos(query).then(({ hits, total }) => {
-    //     console.log({ hits, total });
-
-        
-        
-    //     renderPhotoGalleryMarkup(hits);
-        
-    //     pixabay.calculateTotalHits(total);
-    //     Notify.success(`Hooray! We found ${total} images.`);
-
-    //     if (pixabay.isShowLoadMore) {
-    //         refs.loadMoreBtn.classList.remove('is-hidden');
-    //     }
-    // }).catch(err => {
-    //     Notify.failure(err.message, 'Oops, something went wrong!');
-    //     clearPage();
-    // });
 };
 
 function onLoadMoreClick() {
@@ -97,8 +106,8 @@ function onLoadMoreClick() {
 
     pixabay.getPhotos().then(({ hits }) => {
         renderPhotoGalleryMarkup(hits);
-    }).catch(err => {
-        Notify.failure(err.message, 'Oops, something went wrong!');
+    }).catch(error => {
+        Notify.failure(error.message, 'Oops, something went wrong!');
         clearPage();
     });
 }
@@ -108,8 +117,3 @@ function clearPage() {
     refs.galleryWrapper.innerHTML = '';
     refs.loadMoreBtn.classList.add('is-hidden');
 }
-
-
-
-var lightbox = new SimpleLightbox('.gallery a');
-

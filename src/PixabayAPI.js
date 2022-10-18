@@ -23,8 +23,6 @@ export class PixabayAPI {
         return this.#query;
     }
 
-
-    
     incrementPage() {
         this.#page += 1;
     }
@@ -32,7 +30,6 @@ export class PixabayAPI {
     resetPage() {
         this.#page = 1;
     }
-
 
     calculateTotalHits(total) {
         this.#totalHits = Math.ceil(total / this.#perPage);

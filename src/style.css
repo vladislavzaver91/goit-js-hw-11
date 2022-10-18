@@ -1,8 +1,10 @@
+html {
+    scroll-behavior: smooth;
+}
 
 img {
     display: block;
     max-width: 100%;
-    height: auto;
     width: 100%;
     height: 260px;
 }
@@ -26,18 +28,44 @@ p {
 .search-form {
     display: flex;
     justify-content: center;
+    margin-bottom: 30px;
 }
 
 .search-input {
     width: 750px;
     height: 40px;
-    border: 1px solid #303030;
     padding-left: 15px;
     font-size: 18px;
+    border: 2px solid #303030;
+    border-radius: 4px;
+    outline: none;
+    color: #212121;
+}
+
+.search-input:hover,
+.search-input:focus {
+    border-color: #27e998;
 }
 
 .btn-submit {
     margin-left: 15px;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 22px;
+    color: #212121;
+    background-color: #27e998;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.19;
+    letter-spacing: 0.03em;
+}
+
+.btn-submit:hover,
+.btn-submit:focus {
+    transition: 300ms;
+    color: #ffffff;
+    background-color: #2ebcf5ef;
 }
 
 .gallery {
@@ -61,11 +89,11 @@ p {
 
 .photo-card:focus,
 .photo-card:hover {
+    transition: 300ms;
     border-radius: 0px 0px 4px 4px;
     background-color: #ffffff;
     box-shadow: 0px 1px 3px rgb(0 0 0 / 12%), 0px 1px 1px rgb(0 0 0 / 14%), 0px 2px 1px rgb(0 0 0 / 20%);
 }
-
 
 .info {
     display: flex;
@@ -100,6 +128,27 @@ p {
 .load-more {
     margin: 0 auto;
     display: block;
+}
+
+.scroll-top-btn {
+    position: fixed;
+    bottom: 70px;
+    right: 50px;
+    font-size: 40px;
+    z-index: 9999;
+    color: #27e998;
+    cursor: pointer;
+}
+
+.scroll-top-btn:hover,
+.scroll-top-btn:focus {
+    transition: 300ms;
+    color: #2ebcf5ef;
+}
+
+.is-show {
+    opacity: 1;
+    transition: 400ms;
 }
 
 .is-hidden {
